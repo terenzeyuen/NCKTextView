@@ -22,7 +22,7 @@ class ViewController: UIViewController, UITextViewDelegate {
         // Init and config TextView
         textView = NCKTextView(frame: self.view.bounds, textContainer: NSTextContainer())
         textView.enableToolbar()
-        textView.delegate = self
+        textView.nck_delegate = self
         
         // add to View
         self.view.addSubview(textView)
@@ -62,5 +62,6 @@ class ViewController: UIViewController, UITextViewDelegate {
     func textViewDidChangeSelection(textView: UITextView) {
         print("text view font: \(textView.font)")
     }
+
 }
 

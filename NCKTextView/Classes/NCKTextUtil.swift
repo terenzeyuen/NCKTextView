@@ -19,6 +19,14 @@ class NCKTextUtil: NSObject {
         }
     }
     
+    class func isBackspace(text: String) -> Bool {
+        if text == "" {
+            return true
+        } else {
+            return false
+        }
+    }
+    
     class func isSelectedTextWithTextView(textView: UITextView) -> Bool {
         let length = textView.selectedRange.length
         return length > 0
@@ -58,6 +66,34 @@ class NCKTextUtil: NSObject {
         let endLocation = lineEndIndexWithString(string, location: location)
         
         return NSMakeRange(startLocation, endLocation - startLocation)
+    }
+    
+    class func currentParagraphStringOfString(string: String, location: Int) -> String {
+        return NSString(string: string).substringWithRange(paragraphRangeOfString(string, location: location))
+    }
+    
+    /**
+     Just return ListTypes.
+     */
+    class func paragraphTypeWithObjectLine(objectLine: String) -> NCKInputParagraphType {
+        let objectLineRange = NSMakeRange(0, NSString(string: objectLine).length)
+        
+        let unorderedListMatches = NCKTextUtil.markdownUnorderedListRegularExpression.matchesInString(objectLine, options: [], range: objectLineRange)
+        if unorderedListMatches.count > 0 {
+            let firstChar = NSString(string: objectLine).substringToIndex(1)
+            if firstChar == "-" {
+                return .DashedList
+            } else {
+                return .BulletedList
+            }
+        }
+        
+        let orderedListMatches = NCKTextUtil.markdownOrderedListRegularExpression.matchesInString(objectLine, options: [], range: objectLineRange)
+        if orderedListMatches.count > 0 {
+            return .NumberedList
+        }
+        
+        return .Body
     }
     
     class func isBoldFont(font: UIFont, boldFontName: String) -> Bool {

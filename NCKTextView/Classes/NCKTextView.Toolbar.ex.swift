@@ -21,6 +21,15 @@ var nck_formatTableViewController: NCKFormatTableViewController?
 var formatMenuView: UIView?
 
 extension NCKTextView {
+    
+    /**
+     Remove toolbar notifications
+     */
+    
+    public func removeToolbarNotifications() {
+         NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+    
     /**
      Enable the toolbar, binding the show and hide events.
      
@@ -67,7 +76,7 @@ extension NCKTextView {
             
             let nck_formatNavigationController = UIStoryboard(name: "NCKTextView", bundle: bundle).instantiateViewControllerWithIdentifier("NCKFormatNavigationController") as! UINavigationController
             
-            nck_formatTableViewController = nck_formatNavigationController.viewControllers[0] as! NCKFormatTableViewController
+            nck_formatTableViewController = nck_formatNavigationController.viewControllers[0] as? NCKFormatTableViewController
             nck_formatTableViewController?.selectedCompletion = { [unowned self] (type) in
                 
                 switch type {
@@ -82,14 +91,6 @@ extension NCKTextView {
                     if self.currentParagraphType() == .Title {
                         self.changeCurrentParagraphTextWithInputFontMode(.Normal)
                     }
-                    
-                    break
-                case .CheckedList:
-                    if self.currentParagraphType() == .Title {
-                        self.changeCurrentParagraphTextWithInputFontMode(.Normal)
-                    }
-                    
-                    self.checkedListParagraph()
                     
                     break
                 case .BulletedList:
@@ -145,6 +146,10 @@ extension NCKTextView {
     
     func keyboardWillShowOrHide(notification: NSNotification) {
         guard let info = notification.userInfo else {
+            return
+        }
+  
+        guard self.superview != nil else {
             return
         }
         
